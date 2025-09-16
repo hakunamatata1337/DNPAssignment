@@ -1,9 +1,18 @@
 
+using System.Data.Common;
+
 namespace InMemoryRepositories;
 
 public class CommentInMemoryRepository : ICommentRepository
 {
     List<Comment> comments = new List<Comment>();
+
+    public CommentInMemoryRepository()
+    {
+        comments.Add(new Comment { Id = 0, Body = "To prawda", UserId = 1, PostId = 2 });
+        comments.Add(new Comment { Id = 1, Body = "Polska przejmuje serva xdddd", UserId = 2, PostId = 0 });
+        comments.Add(new Comment { Id = 2, Body = "Gowno", UserId = 2, PostId = 2 });
+    }
 
     public Task<Comment> AddAsync(Comment comment)
     {

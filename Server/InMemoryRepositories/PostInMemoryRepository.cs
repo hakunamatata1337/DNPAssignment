@@ -5,6 +5,13 @@ public class PostInMemoryRepository : IPostRepository
 {
     List<Post> posts = new List<Post>();
 
+    public PostInMemoryRepository()
+    {
+        posts.Add(new Post { Id = 0, Title = "Mysz", Body = "Mysz smaczna", UserId = 0});
+        posts.Add(new Post { Id = 1, Title = "Kot", Body = "Kot je", UserId = 2});
+        posts.Add(new Post { Id = 2, Title = "Szczur", Body = "Szczur capi", UserId = 1});
+    }
+
     public Task<Post> AddAsync(Post post)
     {
         post.Id = posts.Any() ? posts.Max(p => p.Id) + 1 : 1;
