@@ -1,6 +1,4 @@
 
-using System.Data.Common;
-
 namespace InMemoryRepositories;
 
 public class CommentInMemoryRepository : ICommentRepository
