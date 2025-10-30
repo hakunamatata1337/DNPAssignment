@@ -8,17 +8,25 @@ public class CommentsController : ControllerBase
 
     public CommentsController(ICommentRepository commentRepo)
     {
-        this.commentRepository = commentRepo;
+        commentRepository = commentRepo;
     }
 
    [HttpPost]
-    public async Task<ActionResult<Comment>> AddComment(
+    public async Task<ActionResult<CommentDTO>> AddComment(
        [FromBody] CreateCommentDTO request
    )
     {
         Comment comment = new() { Body = request.Body, UserId = request.UserId, PostId = request.PostId};
         Comment created = await commentRepository.AddAsync(comment);
-        return Created($"/comments/{created.Id}", created);
+
+        CommentDTO dto = new()
+        {
+            Id = created.Id,
+            Body = created.Body,
+            UserId = created.UserId,
+            PostId = created.PostId
+        };
+        return Created($"/comments/{dto.Id}", dto);
     }
 
     [HttpPut("{id:int}")]
@@ -41,13 +49,21 @@ public class CommentsController : ControllerBase
     }
 
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<Comment>> GetCommentById(int id)
+    public async Task<ActionResult<CommentDTO>> GetCommentById(int id)
     {
         try
         {
             Comment returnedComment = await commentRepository.GetSingleAsync(id);
 
-            return Ok(returnedComment);
+            CommentDTO dto = new()
+            {
+                Id = returnedComment.Id,
+                Body = returnedComment.Body,
+                UserId = returnedComment.UserId,
+                PostId = returnedComment.PostId
+            };
+
+            return Ok(dto);
         }
         catch (Exception e)
         {
@@ -57,7 +73,7 @@ public class CommentsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IQueryable<Comment>>> GetManyComments([FromQuery] int? postId, [FromQuery] int? userId)
+    public async Task<ActionResult<IQueryable<CommentDTO>>> GetManyComments([FromQuery] int? postId, [FromQuery] int? userId)
     {
         IQueryable<Comment> comments = commentRepository.GetManyAsync();
 
@@ -71,7 +87,13 @@ public class CommentsController : ControllerBase
             comments = comments.Where(c => c.UserId == userId);
         }
 
-        return Ok(comments);
+        var dtos =comments.Select(c => new CommentDTO { 
+                Id = c.Id,
+                Body = c.Body,
+                UserId = c.UserId,
+                PostId = c.PostId });
+
+        return Ok(dtos);
     }
 
 

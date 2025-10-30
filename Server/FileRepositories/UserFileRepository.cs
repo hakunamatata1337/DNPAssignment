@@ -10,6 +10,7 @@ public class UserFileRepository : IUserRepository
         if (!File.Exists(filePath))
         {
             File.WriteAllText(filePath, "[]");
+            AddAsync(new User { Username = "FirstUser" , Password="123"}).Wait();
         }
     }
 

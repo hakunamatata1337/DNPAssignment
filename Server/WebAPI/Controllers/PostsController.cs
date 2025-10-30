@@ -64,7 +64,7 @@ public class PostsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IQueryable<Post>>> GetManyPosts([FromQuery] string titleContains, [FromQuery] int? writtenBy)
+    public async Task<ActionResult<IQueryable<PostDTO>>> GetManyPosts([FromQuery] string? titleContains, [FromQuery] int? writtenBy)
     {
         IQueryable<Post> posts = postRepository.GetManyAsync();
 
@@ -78,7 +78,9 @@ public class PostsController : ControllerBase
             posts = posts.Where(p => p.UserId == writtenBy);
         }
 
-        return Ok(posts);
+        var dtos =posts.Select(p => new PostDTO { Id = p.Id, Title = p.Title, Body = p.Body, UserId = p.UserId });
+
+        return Ok(dtos);
     }
 
 

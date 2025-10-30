@@ -12,6 +12,7 @@ public class PostFileRepository : IPostRepository
         if (!File.Exists(filePath))
         {
             File.WriteAllText(filePath, "[]");
+            AddAsync(new Post { Title = "First Post", Body = "This is the body of the first post", UserId = 1 }).Wait();
         }
     }
     public async Task<Post> AddAsync(Post post)
