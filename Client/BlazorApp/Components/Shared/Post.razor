@@ -1,0 +1,25 @@
+
+
+   <NavLink class="nav-link" href="@GetLink()">
+        <div class="border" >
+            <div>Title: @Title</div>
+            <div>Body: @Body</div>
+        </div>
+    </NavLink>
+
+@code {
+
+    [Parameter]
+    public int PostId { get; set; } = 1;
+
+    [Parameter]
+    public string Title { get; set; } = "Default Title";
+    
+    [Parameter]
+    public string Body { get; set; } = "Default Body";
+
+    [Parameter]
+    public int UserId { get; set; } = 1;
+
+    private string GetLink() => $"/posts/{PostId}";
+}

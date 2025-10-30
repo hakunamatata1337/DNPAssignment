@@ -1,0 +1,60 @@
+@page "/posts/{PostId:int}"
+@using BlazorApp.Components.Shared
+
+@if(post != null)
+{
+    <div class="border">
+        <div>Title: @post.Title</div>
+        <div>Body: @post.Body</div>
+        <div>Written By: @(user?.Username ?? "")  </div>
+
+        <div>
+            <h3>Comments:</h3>
+            @if(comments != null)
+            {
+                if(comments.Count == 0)
+                {
+                    <div>No comments found.</div>
+                }else {
+                    @foreach(var comment in comments)
+                    {
+                        <div class="border m-2 p-2">
+                            <div>@comment.UserId : </div>
+                            <div>@comment.Body</div>
+                        
+                        </div>
+                    }
+                }
+            }
+        </div>
+        @if(user != null) {
+              <CreateComment PostId=@PostId UserId=@user.Id/>
+        }
+      
+    </div>
+}
+@code {
+    [Parameter]
+    public int PostId { get; set; } = 1;
+
+    [Inject]
+    public IPostsService PostsService { get; set; } = default!;
+
+    [Inject]
+    public ICommentsService CommentsService { get; set; } = default!;
+
+    [Inject]
+    public IUsersService UsersService { get; set; } = default!;
+
+    private PostDTO? post;
+
+    private List<CommentDTO>? comments;
+
+    private UserDTO? user;
+    protected override async Task OnInitializedAsync()
+    {
+        comments = await CommentsService.GetCommentsByPostIdAsync(PostId);
+        post = await PostsService.GetPostByIdAsync(PostId);
+        user = ( await UsersService.GetUserById(post.UserId) );
+    }
+}

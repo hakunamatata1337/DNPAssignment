@@ -1,0 +1,27 @@
+@page "/posts"
+@rendermode InteractiveServer
+
+<PageTitle>Posts</PageTitle>
+
+<h1>Bruh</h1>
+<div>AUDHuIWuH</div>
+<div>@(posts?.Count ?? 0)</div>
+
+
+@foreach (var post in posts ?? new List<PostDTO>())
+{
+   <Post Title=@post.Title Body=@post.Body PostId=@post.Id  UserId=@post.Id/>
+   <br/>
+}
+@code {
+     [Inject]
+    public IPostsService PostsService { get; set; } = default!;
+    List<PostDTO>? posts;
+
+
+    //@dev I think its incorrect as it only fires once ?
+    protected override async Task OnInitializedAsync()
+    {
+        posts = await PostsService.GetPostsAsync();
+    }
+}

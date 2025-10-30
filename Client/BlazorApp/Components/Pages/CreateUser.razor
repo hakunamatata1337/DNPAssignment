@@ -1,0 +1,39 @@
+@page "/users/create"
+@using ApiContracts
+@using BlazorApp.Components.Shared
+@rendermode InteractiveServer
+
+<PageTitle>Create User</PageTitle>
+
+
+<h1>Status: @Status</h1>
+<EditForm method="post" Model=@UserDTO OnSubmit=@FormSubmitted FormName="createUserForm" Enhance>
+    <div class="mb-3">
+        <label for="username" class="form-label">Username</label>
+        <InputText  id="username" class="form-control" @bind-Value="UserDTO.Username" />
+    </div>
+    <div class="mb-3">
+        <label for="password" class="form-label">Password</label>
+         <InputTextArea id="password" class="form-control" @bind-Value="UserDTO.Password" />
+  
+    </div>
+	<input type="submit" value="Submit" class="btn btn-primary"/>
+</EditForm>
+
+@code
+{
+	string Status = "Not submitted";
+
+    [SupplyParameterFromForm]
+	public CreateUserDTO UserDTO {get; set;} = new CreateUserDTO{Username="", Password=""};
+
+    [Inject]
+    public IUsersService UsersService { get; set; } = default!;
+
+	void FormSubmitted()
+	{
+		Status = "User Created";
+        UsersService.AddUser(UserDTO);
+        UserDTO = new CreateUserDTO{Username="", Password=""};
+	}
+}

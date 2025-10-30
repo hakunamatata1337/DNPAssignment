@@ -1,0 +1,40 @@
+@page "/posts/create"
+@using ApiContracts
+@using BlazorApp.Components.Shared
+@rendermode InteractiveServer
+
+<PageTitle>Create Post</PageTitle>
+
+
+<h1>Status: @Status</h1>
+<EditForm method="post" Model=@PostDTO OnSubmit=@FormSubmitted FormName="createPostForm" Enhance>
+    <div class="mb-3">
+        <label for="title" class="form-label">Title</label>
+        <InputText  id="title" class="form-control" @bind-Value="PostDTO.Title" />
+
+    </div>
+    <div class="mb-3">
+        <label for="body" class="form-label">Body</label>
+         <InputTextArea id="body" class="form-control" @bind-Value="PostDTO.Body" />
+  
+    </div>
+	<input type="submit" value="Submit" class="btn btn-primary"/>
+</EditForm>
+
+@code
+{
+	string Status = "Not submitted";
+
+    [SupplyParameterFromForm]
+	public CreatePostDTO PostDTO {get; set;} = new CreatePostDTO{Title="", Body="", UserId=1};
+
+    [Inject]
+    public IPostsService PostsService { get; set; } = default!;
+
+	void FormSubmitted()
+	{
+		Status = "Post Created";
+        PostsService.CreatePostAsync(PostDTO);
+        PostDTO = new CreatePostDTO{Title="", Body="", UserId=1};
+	}
+}
