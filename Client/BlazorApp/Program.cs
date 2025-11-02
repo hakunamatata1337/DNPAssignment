@@ -1,5 +1,5 @@
 using BlazorApp.Components;
-
+using Microsoft.AspNetCore.Components.Authorization;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -10,6 +10,7 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("http://
 builder.Services.AddScoped<IPostsService, HttpPostsService>();
 builder.Services.AddScoped<ICommentsService, HttpCommentsService>();
 builder.Services.AddScoped<IUsersService, HttpUsersService>();
+builder.Services.AddScoped<AuthenticationStateProvider, SimpleAuthProvider>();
 
 var app = builder.Build();
 

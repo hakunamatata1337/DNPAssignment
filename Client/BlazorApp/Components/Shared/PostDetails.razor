@@ -27,12 +27,18 @@
                 }
             }
         </div>
-        @if(user != null) {
-              <CreateComment PostId=@PostId UserId=@user.Id/>
-        }
-      
+      <AuthorizeView>
+        <Authorized>
+            @{
+                //I am assuming that when user is authorized they have claim "Id"
+            var userId= Int32.Parse(context.User.FindFirst("Id")!.Value!);
+            }
+            <CreateComment PostId="@PostId" UserId="@userId" />  
+        </Authorized>
+      </AuthorizeView>
     </div>
 }
+
 @code {
     [Parameter]
     public int PostId { get; set; } = 1;
@@ -54,7 +60,13 @@
     protected override async Task OnInitializedAsync()
     {
         comments = await CommentsService.GetCommentsByPostIdAsync(PostId);
+        Console.WriteLine($"Fetched {comments.Count} comments for post {PostId}");
         post = await PostsService.GetPostByIdAsync(PostId);
         user = ( await UsersService.GetUserById(post.UserId) );
+    }
+
+    private int GetLoggedUserId()
+    {
+        return user != null ? user.Id : 0;
     }
 }

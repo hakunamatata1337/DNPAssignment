@@ -1,6 +1,8 @@
 @page "/posts/create"
+@attribute [Authorize]
 @using ApiContracts
 @using BlazorApp.Components.Shared
+@using System.Security.Claims
 @rendermode InteractiveServer
 
 <PageTitle>Create Post</PageTitle>
@@ -28,12 +30,27 @@
     [SupplyParameterFromForm]
 	public CreatePostDTO PostDTO {get; set;} = new CreatePostDTO{Title="", Body="", UserId=1};
 
+    [CascadingParameter] public Task<AuthenticationState> State { get; set; }
+
     [Inject]
     public IPostsService PostsService { get; set; } = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+         AuthenticationState authenticationState = await State;
+         ClaimsPrincipal claimsPrincipal = authenticationState.User;
+
+         if(claimsPrincipal.Identity != null && claimsPrincipal.Identity.IsAuthenticated)
+         {
+            string userIdAsString = claimsPrincipal.Claims.Single(c => c.Type == "Id").Value;
+            PostDTO.UserId = int.Parse(userIdAsString);
+         }
+    }
 
 	void FormSubmitted()
 	{
 		Status = "Post Created";
+
         PostsService.CreatePostAsync(PostDTO);
         PostDTO = new CreatePostDTO{Title="", Body="", UserId=1};
 	}

@@ -4,13 +4,17 @@ using System.Text.Json;
 public class UserFileRepository : IUserRepository
 {
      private readonly string filePath = "users.json";
+     //@dev used to prevent issues with concurrent file access
+    private static readonly object _fileLock = new();
 
     public UserFileRepository()
     {
-        if (!File.Exists(filePath))
+        lock (_fileLock)
         {
-            File.WriteAllText(filePath, "[]");
-            AddAsync(new User { Username = "FirstUser" , Password="123"}).Wait();
+            if (!File.Exists(filePath))
+            {
+                File.WriteAllText(filePath, "[]");
+            }
         }
     }
 
@@ -75,8 +79,6 @@ public class UserFileRepository : IUserRepository
             throw new InvalidOperationException($"User with ID '{id}' not found");
         }
 
-        usersAsJson = JsonSerializer.Serialize(users);
-        await File.WriteAllTextAsync(filePath, usersAsJson);
         return existingUser;
     }
 

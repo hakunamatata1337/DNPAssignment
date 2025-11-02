@@ -7,12 +7,17 @@ namespace FileRepositories;
 public class CommentFileRepository : ICommentRepository
 {
     private readonly string filePath = "comments.json";
-
+     //@dev used to prevent issues with concurrent file access
+    private static readonly object _fileLock = new();
     public CommentFileRepository()
     {
-        if (!File.Exists(filePath))
+        
+        lock (_fileLock)
         {
-            File.WriteAllText(filePath, "[]");
+            if (!File.Exists(filePath))
+            {
+                File.WriteAllText(filePath, "[]");
+            }
         }
     }
 
@@ -79,8 +84,6 @@ public class CommentFileRepository : ICommentRepository
             throw new InvalidOperationException($"Comment with ID '{id}' not found");
         }
         
-        commentsAsJson = JsonSerializer.Serialize(comments);
-        await File.WriteAllTextAsync(filePath, commentsAsJson);
         return existingComment;
     }
 

@@ -1,0 +1,39 @@
+@page "/login"
+
+@inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager NavMgr
+
+
+<AuthorizeView>
+    <NotAuthorized>
+        <h3>Please login</h3> 
+        <label>User name:</label> 
+         <input type="number" @bind="userId"/>  
+        <label>Password:</label>
+         <input type="password" @bind="password"/> 
+         @if (!string.IsNullOrEmpty(errorLabel)) 
+         {
+             <label style="color: red"> @errorLabel  </label>
+        } 
+        <button @onclick="LoginAsync">Log in</button>
+    </NotAuthorized>
+    <Authorized>
+        <h3>Hello, @context.User.Identity.Name</h3>
+    </Authorized>
+</AuthorizeView>
+
+@code {
+    private int userId;
+    private string password;
+    private string errorLabel;
+
+    private async Task LoginAsync() {
+        errorLabel = "";
+        try {
+            await ((SimpleAuthProvider)AuthStateProvider).Login(userId, password);
+        }catch (Exception e) {
+            Console.WriteLine(e.Message);
+            errorLabel = $"Error: {e.Message}";
+        }
+    }
+}

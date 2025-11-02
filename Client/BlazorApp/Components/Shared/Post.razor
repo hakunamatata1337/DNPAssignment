@@ -10,7 +10,7 @@
 @code {
 
     [Parameter]
-    public int PostId { get; set; } = 1;
+    public int PostId { get; set; } = 0;
 
     [Parameter]
     public string Title { get; set; } = "Default Title";
@@ -19,7 +19,7 @@
     public string Body { get; set; } = "Default Body";
 
     [Parameter]
-    public int UserId { get; set; } = 1;
+    public int UserId { get; set; } = 0;
 
     private string GetLink() => $"/posts/{PostId}";
 }

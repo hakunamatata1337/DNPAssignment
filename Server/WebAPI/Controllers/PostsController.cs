@@ -53,7 +53,7 @@ public class PostsController : ControllerBase
         try
         {
             Post returnedPost = await postRepository.GetSingleAsync(id);
-
+            Console.WriteLine($"Fetched post: {returnedPost.Id}");
             return Ok(returnedPost);
         }
         catch (Exception e)

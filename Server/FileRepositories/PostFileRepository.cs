@@ -5,14 +5,19 @@ namespace FileRepositories;
 
 public class PostFileRepository : IPostRepository
 {
-   private readonly string filePath = "posts.json";
-
+    private readonly string filePath = "posts.json";
+   
+    //@dev used to prevent issues with concurrent file access
+    private static readonly object _fileLock = new();
     public PostFileRepository()
     {
-        if (!File.Exists(filePath))
+        //@Todo ask teacher why I need to lock here but not in the other methods
+        lock (_fileLock)
         {
-            File.WriteAllText(filePath, "[]");
-            AddAsync(new Post { Title = "First Post", Body = "This is the body of the first post", UserId = 1 }).Wait();
+            if (!File.Exists(filePath))
+            {
+                File.WriteAllText(filePath, "[]");
+            }
         }
     }
     public async Task<Post> AddAsync(Post post)
@@ -75,9 +80,6 @@ public class PostFileRepository : IPostRepository
         {
             throw new InvalidOperationException($"Post with ID '{id}' not found");
         }
-
-        postsAsJson = JsonSerializer.Serialize(posts);
-        await File.WriteAllTextAsync(filePath, postsAsJson);
 
         return existingPost;
     }
