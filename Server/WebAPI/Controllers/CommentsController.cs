@@ -16,7 +16,7 @@ public class CommentsController : ControllerBase
        [FromBody] CreateCommentDTO request
    )
     {
-        Comment comment = new() { Body = request.Body, UserId = request.UserId, PostId = request.PostId};
+        Comment comment = new (request.Body,request.UserId, request.PostId);
         Comment created = await commentRepository.AddAsync(comment);
 
         CommentDTO dto = new()
@@ -37,7 +37,7 @@ public class CommentsController : ControllerBase
     {
         try
         {
-            Comment comment = new() { Id=id, Body = request.Body, PostId = request.PostId, UserId = request.UserId };
+            Comment comment = new(id, request.Body, request.PostId, request.UserId );
             await commentRepository.UpdateAsync(comment);
             return Ok();
         } catch (Exception e)

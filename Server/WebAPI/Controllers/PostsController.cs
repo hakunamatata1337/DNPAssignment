@@ -16,7 +16,7 @@ public class PostsController : ControllerBase
        [FromBody] CreatePostDTO request
    )
     {
-        Post post = new() { Title = request.Title, Body = request.Body, UserId = request.UserId };
+        Post post = new(request.Title, request.Body, request.UserId );
         Post created = await postRepository.AddAsync(post);
         PostDTO dto = new()
         {
@@ -36,7 +36,7 @@ public class PostsController : ControllerBase
     {
         try
         {
-            Post post = new() { Id = id, Title = request.Title, Body = request.Body, UserId = request.UserId };
+            Post post = new(id, request.Title,  request.Body, request.UserId );
             await postRepository.UpdateAsync(post);
             return Ok();
         } catch (Exception e)

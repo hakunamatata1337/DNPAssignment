@@ -17,8 +17,9 @@ public class AuthController : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginUserDTO request)
     {
-       
+         Console.WriteLine("AAAAAAAAAAAAAAAA");
         var user =await userRepository.GetSingleAsync(request.Id);
+        Console.WriteLine(user);
         if (user.Password != request.Password)
         {
             return Unauthorized("Invalid password.");

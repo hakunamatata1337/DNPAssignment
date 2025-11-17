@@ -16,7 +16,7 @@ public class UsersController : ControllerBase
        [FromBody] CreateUserDTO request
    )
     {
-        User user = new() { Username = request.Username, Password = request.Password };
+        User user = new( request.Username, request.Password );
         User created = await userRepository.AddAsync(user);
         UserDTO dto = new()
         {
@@ -34,7 +34,7 @@ public class UsersController : ControllerBase
     {
         try
         {
-            User user = new() { Id = id, Username = request.Username, Password = request.Password };
+            User user = new(id, request.Username, request.Password);
             await userRepository.UpdateAsync(user);
             return Ok();
         } catch (Exception e)
